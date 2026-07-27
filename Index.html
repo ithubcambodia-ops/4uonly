@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Will you date me?</title>
+  <style>
+    :root {
+      --bg-color: #fce4ec;
+      --card-bg: #ffffff;
+      --accent-pink: #d81b60;
+      --accent-hover: #c2185b;
+      --text-main: #4a154b;
+      --text-sub: #7a6e78;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 2rem 1.8rem;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      width: 90%;
+      max-width: 420px;
+      text-align: center;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.2rem;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    .card.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-icon {
+      width: 100px;
+      height: 100px;
+      border-radius: 20px;
+      object-fit: cover;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: var(--text-main);
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    p {
+      color: var(--text-sub);
+      font-size: 0.95rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 1rem;
+      outline: none;
+      background: #fafafa;
+    }
+
+    .btn-main {
+      background-color: var(--accent-pink);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 20px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s;
+    }
+
+    .btn-main:hover {
+      background-color: var(--accent-hover);
+    }
+
+    /* Unclickable, evasive No Button */
+    .btn-no {
+      background-color: #b39ddb;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 16px;
+      cursor: pointer;
+      position: fixed;
+      top: 65%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transition: all 0.15s ease-out;
+      z-index: 999;
+      display: none;
+    }
+
+    .food-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      width: 100%;
+    }
+
+    .food-option {
+      border: 2px solid transparent;
+      background: #fdf2f6;
+      padding: 12px;
+      border-radius: 16px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.85rem;
+      color: var(--text-main);
+    }
+
+    .food-option span {
+      font-size: 1.8rem;
+    }
+
+    .food-option.selected {
+      border-color: var(--accent-pink);
+      background: #fce4ec;
+    }
+
+    /* QR Payment Frame Styling */
+    .qr-frame {
+      background: #fff0f5;
+      border: 2px dashed var(--accent-pink);
+      border-radius: 20px;
+      padding: 15px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      box-shadow: inset 0 0 10px rgba(216, 27, 96, 0.05);
+    }
+
+    .qr-image {
+      width: 180px;
+      height: 180px;
+      border-radius: 12px;
+      border: 4px solid white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      background: #fff;
+      object-fit: cover;
+    }
+
+    .price-tag {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--accent-pink);
+      background: white;
+      padding: 4px 16px;
+      border-radius: 12px;
+      border: 1px solid #f8bbd0;
+    }
+
+    .funny-subtext {
+      font-size: 0.75rem;
+      color: #888;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Step 0: Name Input -->
+  <div class="card active" id="step0">
+    <h2>Welcome! 🌸</h2>
+    <p>Please enter your name to start:</p>
+    <input type="text" id="userNameInput" placeholder="Your name...">
+    <button class="btn-main" onclick="saveName()">Continue 💕</button>
+  </div>
+
+  <!-- Step 1: Will you date me? -->
+  <div class="card" id="step1">
+    <img src="https://imgs.search.brave.com/imXYwkZyA3k0mPv--fkSnH_6B3EWNcbuRC4uTJG0JFA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTU3/NTgwNjgxL3Bob3Rv/L2dvb2Z5LXBhc3Rl/bC1yZXRyby1tYW4u/anBnP3M9NjEyeDYx/MiZ3PTAmaz0yMCZj/PVZzVkY3ckJwNXZF/UW9PZkx2T1Q0cTB1/SHJYc2UzZko5cmVS/NW9SVklIZlk9" width="100" height="100" class="card-icon" alt="Goofy Retro Man">
+    <h2 id="questionHeading">🌸 Will you go on a date with me? 🌸</h2>
+    <button class="btn-main" onclick="nextStep(2)">YES ♥</button>
+  </div>
+  
+  <!-- Evading / Rotating No Button -->
+  <button class="btn-no" id="noBtn" onmouseover="dodgeNoButton()" onclick="dodgeNoButton()">no 🐾</button>
+
+  <!-- Step 2: Surprise Response -->
+  <div class="card" id="step2">
+    <div style="font-size: 3rem;"><img src="https://imgs.search.brave.com/pTMgrdgVt2ZCKgxYFNTkTEGQOdLEm-WmLv6KbFzQ2po/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3N5c3RlbS9y/ZXNvdXJjZXMvdGh1/bWJuYWlscy8wNzMv/NzA2LzA4Ny9zbWFs/bC9hLWN1dGUtYmFi/eS1tYWtlcy1hLWZ1/bm55LWZhY2Utd2l0/aC13aWRlLXN1cnBy/aXNlZC1leWVzLWFn/YWluc3QtYS1ncmV5/LWJhY2tncm91bmQt/cGhvdG8uanBn" width="150" height="100" alt="Surprised Baby"></div>
+    <h2>WAIT YOU ACTUALLY SAID YES?? 😭</h2>
+    <p>I was so ready for you to say no 😅</p>
+    <button class="btn-main" onclick="nextStep(3)">okay okay! ➔</button>
+  </div>
+
+  <!-- Step 3: Pick Date & Time -->
+  <div class="card" id="step3">
+    <div style="font-size: 2rem;">📅</div>
+    <h2>So... when are you free?</h2>
+    <div style="width: 100%; text-align: left;">
+      <label>Pick a Day 📅</label>
+      <input type="date" id="datePicker">
+    </div>
+    <div style="width: 100%; text-align: left; margin-top: 10px;">
+      <label>What Time? ⏰</label>
+      <select id="timePicker">
+        <option value="">Select a time...</option>
+        <option value="5:00 PM">5:00 PM</option>
+        <option value="6:00 PM">6:00 PM</option>
+        <option value="7:00 PM">7:00 PM</option>
+        <option value="8:00 PM">8:00 PM</option>
+        <option value="9:00 PM">9:00 PM</option>
+        <option value="10:00 PM">10:00 PM</option>
+      </select>
+    </div>
+    <button class="btn-main" style="margin-top: 15px;" onclick="saveDateTime()">set the date! ♥</button>
+  </div>
+
+  <!-- Step 4: Food Choice -->
+  <div class="card" id="step4">
+    <h2>What are we feeling? 🍽️✨</h2>
+    <p>pick your vibe</p>
+    <div class="food-grid">
+      <div class="food-option" onclick="selectFood(this, 'Walking')"><span>🦶🏻</span>Walking</div>
+      <div class="food-option" onclick="selectFood(this, 'Running')"><span>🦵🏻</span>Running</div>
+      <div class="food-option" onclick="selectFood(this, 'Eating Burgers')"><span>🍔</span>Burgers</div>
+      <div class="food-option" onclick="selectFood(this, 'Movie')"><span>🎦</span>Movie</div>
+      <div class="food-option" onclick="selectFood(this, 'Pho')"><span>🍜</span>Pho</div>
+      <div class="food-option" onclick="selectFood(this, 'Koi Tea')"><span>🥤</span>Koi</div>
+    </div>
+    <button class="btn-main" onclick="nextStep(5)" id="foodNextBtn" style="display:none;">Next ➔</button>
+  </div>
+
+  <!-- Step 5: Ready / Pickup -->
+  <div class="card" id="step5">
+    <h2 id="pickupHeading">glad you didn't say no. be ready, I'm coming to get you 🚗</h2>
+    <p><i>Love you oun</i></p>
+    <p>❤️❤️❤️❤️❤️</p>
+    <button class="btn-main" onclick="nextStep(6)">ok I accept 💖</button>
+  </div>
+
+  <!-- Step 6: QR Code Payment Frame -->
+  <div class="card" id="step6">
+    <h2>💳 Official Date Tax™</h2>
+    <p>Scan to complete payment & confirm your date! 100% worth it 😉</p>
+    
+    <div class="qr-frame">
+      <div class="price-tag">Total: $49.00</div>
+      <!-- QR Image is automatically set via JavaScript below -->
+      <img id="qrCodeImg" class="qr-image" src="" alt="Scan QR Code">
+      <p class="funny-subtext">Scan QR to pay / complete registration 📲<br><i>(Non-refundable • Happiness guaranteed)</i></p>
+    </div>
+
+    <button class="btn-main" onclick="finishAndSendTelegram()">I Scanned & Paid! 🎉</button>
+  </div>
+
+  <!-- Step 7: Done -->
+  <div class="card" id="step7">
+    <h2>Date Confirmed! 🎉</h2>
+    <p>See you then! Telegram notification sent to your date.</p>
+  </div>
+
+  <script>
+    // --- CONFIGURATION ---
+    const TELEGRAM_BOT_TOKEN = '8615152313:AAEPbTcRXMqSWz0PiWXNaLlyWYMXxnU4KqQ';
+    const TELEGRAM_CHAT_ID = '486194909'; // Replace with your numeric Chat ID
+
+    // Paste your link or QR code image URL here:
+    const MY_PROFILE_LINK = 'https://imgs.search.brave.com/DZHgl_ZGxVyp84ROIYgazbs7G9LHncbTzK7gy-Aw73k/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NDFLMk16VmZmK0wu/anBn'; 
+
+    // Dynamically generates a QR code from the link provided above
+    document.getElementById('qrCodeImg').src = 
+      `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(MY_PROFILE_LINK)}`;
+
+    let data = {
+      name: '',
+      date: '',
+      time: '',
+      food: ''
+    };
+
+    function saveName() {
+      const nameInput = document.getElementById('userNameInput').value.trim();
+      if (!nameInput) {
+        alert('Please enter your name!');
+        return;
+      }
+      data.name = nameInput;
+      document.getElementById('questionHeading').innerText = `🌸 ${data.name}, will you go on a date with me? 🌸`;
+      nextStep(1);
+    }
+
+    function nextStep(stepNumber) {
+      document.querySelectorAll('.card').forEach(card => card.classList.remove('active'));
+      document.getElementById(`step${stepNumber}`).classList.add('active');
+
+      const noBtn = document.getElementById('noBtn');
+      if (stepNumber === 1) {
+        noBtn.style.display = 'block';
+      } else {
+        noBtn.style.display = 'none';
+      }
+    }
+
+    function dodgeNoButton() {
+      const btn = document.getElementById('noBtn');
+      const maxX = window.innerWidth - btn.offsetWidth - 20;
+      const maxY = window.innerHeight - btn.offsetHeight - 20;
+
+      const randomX = Math.max(20, Math.floor(Math.random() * maxX));
+      const randomY = Math.max(20, Math.floor(Math.random() * maxY));
+      const randomRotation = Math.floor(Math.random() * 360);
+
+      btn.style.left = `${randomX}px`;
+      btn.style.top = `${randomY}px`;
+      btn.style.transform = `rotate(${randomRotation}deg)`;
+    }
+
+    // Formats and saves the selected date & time cleanly
+    function saveDateTime() {
+      const dateVal = document.getElementById('datePicker').value;
+      const selectedTime = document.getElementById('timePicker').value;
+
+      if (!dateVal || !selectedTime) {
+        alert('Please select both a date and a time!');
+        return;
+      }
+
+      // Convert YYYY-MM-DD into a localized readable date format
+      const [year, month, day] = dateVal.split('-');
+      const formattedDate = new Date(year, month - 1, day).toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+      });
+
+      data.date = formattedDate;
+      data.time = selectedTime;
+
+      // Dynamically update Step 5 text with the chosen time
+      document.getElementById('pickupHeading').innerText = 
+        `glad you didn't say no. be ready by ${data.time}, I'm coming to get you 🚗`;
+
+      nextStep(4);
+    }
+
+    function selectFood(element, foodType) {
+      document.querySelectorAll('.food-option').forEach(el => el.classList.remove('selected'));
+      element.classList.add('selected');
+      data.food = foodType;
+      document.getElementById('foodNextBtn').style.display = 'block';
+    }
+
+    function finishAndSendTelegram() {
+      const textMessage = 
+        `🚨 *NEW DATE CONFIRMED!* 🚨\n\n` +
+        `👤 *Name:* ${data.name}\n` +
+        `📅 *Date Selected:* ${data.date}\n` +
+        `⏰ *Time Selected:* ${data.time}\n` +
+        `✅ *Choice:* ${data.food}\n` +
+        `💳 *Status:* QR Code Scanned / Paid $49!`;
+
+      fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: TELEGRAM_CHAT_ID,
+          text: textMessage,
+          parse_mode: 'Markdown'
+        })
+      })
+      .then(response => response.json())
+      .then(() => nextStep(7))
+      .catch(() => nextStep(7));
+    }
+  </script>
+</body>
+</html>
